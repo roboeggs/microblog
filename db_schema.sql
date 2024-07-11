@@ -20,6 +20,24 @@ CREATE TABLE IF NOT EXISTS email_accounts (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE IF NOT EXISTS articles (
+    article_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    status TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    article_id INTEGER,
+    comment TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (article_id) REFERENCES articles(article_id)
+);
+
 -- Insert default data (if necessary here)
 
 -- Set up three users

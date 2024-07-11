@@ -34,23 +34,30 @@ router.get("/list-users", (req, res, next) => {
  * @desc Displays a page with a form for creating a user record
  */
 router.get("/add-user", (req, res) => {
-    res.render("add-user.ejs");
+    res.render(res.locals.layout, { content: 'add-user' });
+});
+
+router.get("/home-page", (req, res) => {
+    res.render(res.locals.layout, { content: 'home-page' });
+    // res.render("home-page.ejs")
 });
 
 /**
  * @desc Add a new user to the database based on data from the submitted form
  */
 router.post("/add-user", (req, res, next) => {
+    // Get the form data
+    const { first_name, last_name, email, psw, psw_repeat } = req.body;
+
+    // Check if passwords match
+    if (psw !== psw_repeat) {
+        res.status(400).send({ error: "Passwords do not match" });
+        return;
+    }
+
     // Define the query
     const query = "INSERT INTO users (first_name, last_name, email, password) VALUES(?, ?, ?, ?);"
-    
-    // Get the form data
-    const { first_name, last_name, email, psw } = req.body;
-
-    // Validate the form data here before inserting into the database
-
     const query_parameters = [first_name, last_name, email, psw]
-    console.log(query_parameters);
     
     // Execute the query and send a confirmation message
     global.db.run(query, query_parameters,
@@ -60,8 +67,8 @@ router.post("/add-user", (req, res, next) => {
                 res.status(400).send({ error: err.message }); // Send error message as a response from the server
                 return;
             }
-            // If everything went well, send the new user's ID as a response from the server
-            res.status(201).send({ user_id: this.lastID });
+             // If everything went well, redirect the user to another page
+            res.redirect('/users/list-users');
         }
     );
 });

@@ -1,54 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet"  type="text/css" href="/main.css" />
-    <link rel="stylesheet"  type="text/css" href="/normalize.css" />
+<h1>Create account</h1>
+<form class="content__form" action="add-user" method="post">
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+    
+    <label for="first_name"><b>First name</b></label>
+    <input class="content__field" type="text" placeholder="Your first name" name="first_name" id="first_name" required>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <title>Add User</title>
-</head>
-<body class="page">
-    <div class="page__container">
+    <label for="last_name"><b>Last name</b></label>
+    <input class="content__field" type="text" placeholder="Your last name" name="last_name" id="last_name" required>
 
-        <header class="header">
-            <h2 class="header__title">Small Blog</h2>
-            <div></div>
-            <a class="header__link" href="#" target="_self">How do I become an author?</a>
-        </header>
-        <main class="content">
-            <h1>Create account</h1>
-            <form class="content__form" action="add-user" method="post">
-                <p>Please fill in this form to create an account.</p>
-                <hr>
-                
-                <label for="first_name"><b>First name</b></label>
-                <input class="content__field" type="text" placeholder="Your first name" name="first_name" id="first_name" required>
+    <label for="email"><b>Email</b></label>
+    <input class="content__field" type="text" placeholder="Enter Email" name="email" id="email" required>
 
-                <label for="last_name"><b>Last name</b></label>
-                <input class="content__field" type="text" placeholder="Your last name" name="last_name" id="last_name" required>
+    <label for="psw"><b>Password</b></label>
+    <input class="content__field" type="password" placeholder="Enter Password" name="psw" id="psw" required>
 
-                <label for="email"><b>Email</b></label>
-                <input class="content__field" type="text" placeholder="Enter Email" name="email" id="email" required>
-            
-                <label for="psw"><b>Password</b></label>
-                <input class="content__field" type="password" placeholder="Enter Password" name="psw" id="psw" required>
-            
-                <label for="psw-repeat"><b>Repeat Password</b></label>
-                <input class="content__field" type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
-                <hr>
-            
-                <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
-                <button type="submit" class="registerbtn">Register</button>
-                <!-- <button type="submit">Create a new user record</button> -->
-            </form>
-        </main>
-        <footer class="footer">
-            <span>© 2024 “Small Blog”</span>
-        </footer>
-    </div>
-</body>
-</html>
+    <label for="psw_repeat"><b>Repeat Password</b></label>
+    <input class="content__field" type="password" placeholder="Repeat Password" name="psw_repeat" id="psw_repeat" required>
+    <hr>
+
+    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+    <button type="submit" class="registerbtn">Register</button>
+    <!-- <button type="submit">Create a new user record</button> -->
+</form>

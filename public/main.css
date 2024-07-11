@@ -34,6 +34,7 @@
     padding: 10px;
 }
 
+
 .header__link{
     text-decoration: none;
     color: #000;
@@ -62,4 +63,46 @@
     align-items: center;
     padding: 0 48px;
     flex: 0 0 auto;
+}
+
+.content__table {
+    /* width: 100%; */
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid #d3d3d3;
+
+    overflow: hidden;
+
+    margin-bottom: 25px;
+}
+
+.content__table th, .content__table td {
+    border: 1px solid #d3d3d3;
+    padding: 8px;
+}
+
+.content__table th {
+    /* background-color: #f2f2f2; */
+    text-align: left;
+}
+
+.content__table td:first-child {
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+.registerbtn{
+    background-color: #567185; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px; 
+    border-radius: 12px;
+    cursor: pointer;
 }
