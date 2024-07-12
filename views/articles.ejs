@@ -1,0 +1,53 @@
+<h1 class="content__title">Articles</h1>
+<div class="content__article">
+    <div>
+        <span><b>Robbert Partic</b> 2 hours ago</span>
+        <h2>Capybara</h2>
+    </div>
+    <p>The capybara[a] or greater capybara (Hydrochoerus hydrochaeris) is a giant cavy rodent native to South America.</p>
+    <table class="">
+        <thead>
+            <tr>
+                <th>Comments</th>
+                <th>Likes</th>
+                <th>Views</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>56</td>
+                <td>4</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<% if (articles) { %>
+    <% articles.forEach((article) => { %>
+        <div class="content__article">
+            <div>
+                <span><b><%= article.name.first  %> <%= article.name.last  %></b> 2 hours ago</span>
+                <h2><a href="/article/<%= article.article_id %>"><%= article.title %></a></h2>
+            </div>
+            <p class="content__content"><%= article.content %></p>
+            <table class="">
+                <thead>
+                    <tr>
+                        <th>Comments</th>
+                        <th>Likes</th>
+                        <th>Views</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><%= article.commentCount  %></td>
+                        <td>56</td>
+                        <td>4</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    <% }); %>
+<% } else { %>
+    <!-- Здесь можно добавить контент, который будет отображаться, если статья не существует -->
+<% } %>
