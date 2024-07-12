@@ -10,6 +10,11 @@
 
 const express = require("express");
 const router = express.Router();
+const jwt = require('jsonwebtoken');
+const app = express();
+
+// Секретный ключ для подписи JWT
+const SECRET_KEY = 'small-blog-key';
 
 /**
  * @desc Display all the users
@@ -41,6 +46,50 @@ router.get("/home-page", (req, res) => {
     res.render(res.locals.layout, { content: 'home-page' });
     // res.render("home-page.ejs")
 });
+
+
+router.get("/login", (req, res) => {
+    res.render(res.locals.layout, { content: 'login' });
+});
+
+router.post("/login", (req, res, next) => {
+    // Get the form data
+    const { email, psw } = req.body;
+
+    // Define the query
+    const query = "SELECT * FROM users WHERE email = ?;";
+    const query_parameters = [email];
+    
+    // Выполнение запроса и отправка сообщения о подтверждении
+    global.db.get(query, query_parameters, function (err, user) {
+        if (err) {
+            console.error(err.message); // Запись сообщения об ошибке в консоль сервера
+            res.status(400).send({ error: err.message }); // Отправка сообщения об ошибке в ответе сервера
+            return;
+        }
+
+        if (user) {
+            // Проверка пароля
+            if (psw === user.password) {
+                // Если все прошло хорошо, генерация JWT для пользователя
+                const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: '4h' });
+
+                // Установка JWT в куки
+                res.cookie('token', token, { httpOnly: true });
+
+                // Отправка ответа клиенту
+                // res.json({ message: 'Login successful' });
+                res.redirect('/users/home-page');
+            } else {
+                res.status(400).send({ error: "Invalid password" });
+            }
+        } else {
+            res.status(400).send({ error: "User not found" });
+        }
+    });
+
+});
+
 
 /**
  * @desc Add a new user to the database based on data from the submitted form
