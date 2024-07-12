@@ -1,99 +1,132 @@
 <h2>Drafts</h2>
-<table class="content__table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Title</th>
-            <th>Created</th>
-            <th>Last change</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><input type="checkbox" id="capybara" name="capybara"></td>
-            <td><label for="capybara">Capybara</label></td>
-            <td>2022.07.15 21:15</td>
-            <td>2022.07.15 21:15</td>
-        </tr>
-        <tr>
-            <td><input type="checkbox" id="capybara" name="capybara"></td>
-            <td><label for="capybara">Capybara</label></td>
-            <td>2022.07.15 21:15</td>
-            <td>2022.07.15 21:15</td>
-        </tr>
-        <tr>
-            <td><input type="checkbox" id="capybara" name="capybara"></td>
-            <td><label for="capybara">Capybara</label></td>
-            <td>2022.07.15 21:15</td>
-            <td>2022.07.15 21:15</td>
-        </tr>
-        <!-- Add more rows as needed -->
-    </tbody>
-</table>
-<label for="action">Actions:</label>
+<form action="/users/action" method="post">
+    <table class="content__table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Created</th>
+                <th>Last change</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="checkbox" id="capybara" name="capybara"></td>
+                <td><label for="capybara">Capybara</label></td>
+                <td>2022.07.15 21:15</td>
+                <td>2022.07.15 21:15</td>
+            </tr>
+            <!-- Add more rows as needed -->
+            <% articles.forEach((article) => { %>
+                <% if (article.status === 'draft') { %>
+                    <tr>
+                        <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
+                        <td><label for="<%= article.article_id %>"><%= article.title %></label></td>
+                        <td>2022.07.15 21:15</td>
+                        <td>2022.07.15 21:15</td>
+                    </tr>
+                <% } %>
+            <% }); %>
+        </tbody>
+    </table>
 
-<select id="action">
-    <option value="pub">Publish</option>
-    <option value="del">Remove</option>
-</select>
-<button type="submit" class="registerbtn">Apply</button>
+    <a href="/users/create" target="_self" class="">Create new</a>
+
+    <label for="action">Actions:</label>
+
+    <select id="action" name="action">
+        <option value="pub">Publish</option>
+        <option value="del">Remove</option>
+    </select>
+    <button type="submit" class="registerbtn">Apply</button>
+
+</form>
 <h2>Published articles</h2>
-<table class="content__table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Title</th>
-            <th>Created</th>
-            <th>Published</th>
-            <th>Likes</th>
-            <th>Last change</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><input type="checkbox" id="where_node" name="where_node"></td>
-            <td><label for="where_node">Where Node</label></td>
-            <td>2022.07.15 21:15</td>
-            <td>2022.07.20 08:13</td>
-            <td>56</td>
-            <td>2022.07.15 21:15</td>
-        </tr>
-        <!-- Add more rows as needed -->
-    </tbody>
-</table>
-<button type="submit" class="registerbtn">Remove from publication</button>
+<form action="/users/action" method="post">
+    <table class="content__table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Created</th>
+                <th>Published</th>
+                <th>Likes</th>
+                <th>Last change</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="checkbox" id="where_node" name="where_node"></td>
+                <td><label for="where_node">Where Node</label></td>
+                <td>2022.07.15 21:15</td>
+                <td>2022.07.20 08:13</td>
+                <td>56</td>
+                <td>2022.07.15 21:15</td>
+            </tr>
+            <!-- Add more rows as needed -->
+            <% articles.forEach((article) => { %>
+                <% if (article.status === 'pub') { %>
+                    <tr>
+                        <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
+                        <td><label for="<%= article.article_id %>"><%= article.title %></label></td>
+                        <td>2022.07.15 21:15</td>
+                        <td>2022.07.20 08:13</td>
+                        <td>56</td>
+                        <td>2022.07.15 21:15</td>
+                    </tr>
+                <% } %>
+            <% }); %>
+        </tbody>
+    </table>
+    <button type="submit"  name="action" value="take_off" class="registerbtn">Remove from publication</button>
+
+</form>
 <h2>All articles</h2>
 
-<table class="content__table">
-    <thead>
-        <tr>
-            <th>Checkbox</th>
-            <th>Title</th>
-            <th>Created</th>
-            <th>Published</th>
-            <th>Likes</th>
-            <th>Last change</th>
-            <th>Removed from publication</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><input type="checkbox" id="where_node" name="where_node"></td>
-            <td><label for="where_node">Where Node</label></td>
-            <td>2022.07.15 21:15</td>
-            <td>2022.07.20 08:13</td>
-            <td>56</td>
-            <td>2022.07.15 21:15</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><input type="checkbox" id="capybara" name="capybara"></td>
-            <td><label for="capybara">Capybara</label></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
+<form action="/users/action" method="post">
+    <table class="content__table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Created</th>
+                <th>Published</th>
+                <th>Likes</th>
+                <th>Last change</th>
+                <th>Removed from publication</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="checkbox" id="where_node" name="where_node"></td>
+                <td><label for="where_node">Where Node</label></td>
+                <td>2022.07.15 21:15</td>
+                <td>2022.07.20 08:13</td>
+                <td>56</td>
+                <td>2022.07.15 21:15</td>
+                <td></td>
+            </tr>
+            <% articles.forEach((article) => { %>
+            <tr class="highlight-on-hover">
+                <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
+                <td><label for="<%= article.article_id %>">
+                    <a href="/users/create/<%= article.article_id %>"><%= article.title %></a>
+                </label></td>
+                <td><%= article.created %></td>
+                <td><%= article.published %></td>
+                <td><%= article.likes %></td>
+                <td><%= article.last_change %></td>
+                <td><%= article.removed_from_publication %></td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <label for="action">Actions:</label>
+
+    <select id="action" name="action">
+        <option value="pub">Publish</option>
+        <option value="del">Remove</option>
+    </select>
+    <button type="submit" class="registerbtn">Apply</button>
+
+</form>

@@ -1,0 +1,8 @@
+<h1>Title</h1>
+<form action="create"  method="post">
+    <textarea class="content__textarea" name="title" rows="1" maxlength="70"><%= article ? article.title : '' %></textarea>
+    <br>
+    <h2>Body</h2>
+    <textarea class="content__textarea" name="body" rows="4""><%= article ? article.content : '' %></textarea>
+    <button type="submit" class="registerbtn">Submit</button>
+</form>

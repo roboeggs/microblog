@@ -106,3 +106,17 @@
     border-radius: 12px;
     cursor: pointer;
 }
+
+.content__textarea{
+    width: 100%;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    font-size: 16px;
+    resize: vertical;
+}
+
+.highlight-on-hover:hover {
+    background-color: #f5f5f5; /* Измените этот цвет на желаемый */
+    /* cursor: pointer; */
+}

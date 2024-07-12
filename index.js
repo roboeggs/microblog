@@ -8,6 +8,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 var bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs'); // set the app to use ejs for rendering
 app.set('views', __dirname + '/views'); // set the location of the views directory
@@ -31,6 +32,8 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(cookieParser());
+
 // Handle requests to the home page
 app.get('/', (req, res) => {
     res.render('home-page', { layout: res.locals.layout });
@@ -39,6 +42,7 @@ app.get('/', (req, res) => {
 // Add all the route handlers in usersRoutes to the app under the path /users
 const usersRoutes = require('./routes/users');
 app.use('/users', usersRoutes);
+
 
 // Make the web application listen for HTTP requests
 app.listen(port, () => {
