@@ -14,4 +14,8 @@ router.get("/login", userController.loginPage);
 router.post("/login", userController.login);
 router.post("/add-user", userController.addUser);
 
+// Route for profile settings page
+router.get('/settings', auth.verifyToken, userController.profileSettingsPage);
+router.post('/settings', auth.verifyToken, userController.updateProfile);
+
 module.exports = router;

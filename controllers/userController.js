@@ -153,6 +153,83 @@ const addUser = (req, res) => {
     });
 };
 
+
+const profileSettingsPage = (req, res) => {
+    const userId = req.user.id; // Предполагаем, что id пользователя доступен в req.user
+
+    // Запрос к базе данных для получения имени и фамилии пользователя
+    const query = `
+        SELECT first_name, last_name 
+        FROM users 
+        WHERE user_id = ?;
+    `;
+
+    global.db.get(query, [userId], (err, row) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).send({ error: err.message });
+            return;
+        }
+
+        if (!row) {
+            res.status(404).send({ error: 'Пользователь не найден' });
+            return;
+        }
+
+        const user = {
+            firstName: row.first_name,
+            lastName: row.last_name
+        };
+
+        // Рендерим страницу настроек профиля и передаем данные пользователя в шаблон
+        res.render(res.locals.layout, { content: 'profile-settings', user });
+    });
+};
+
+
+const updateProfile = (req, res) => {
+    const user_id = req.user.id; // Получаем ID пользователя из объекта запроса (предположим, что он доступен через req.user)
+    const { first_name, last_name, psw } = req.body; // Извлекаем данные из тела запроса
+
+    
+    console.log(first_name, last_name, psw)
+
+    let updateUserQuery = '';
+    let params = [];
+
+    if (psw) {
+        // Если newPassword не пустой, значит пользователь хочет изменить пароль и данные профиля
+        updateUserQuery = `
+            UPDATE users
+            SET password = ?
+            WHERE user_id = ?;
+        `;
+        params = [psw, user_id];
+        console.log('это пароль');
+    } else {
+        // Если newPassword пустой, значит пользователь хочет изменить только данные профиля
+        updateUserQuery = `
+            UPDATE users
+            SET first_name = ?,
+                last_name = ?
+            WHERE user_id = ?;
+        `;
+        params = [first_name, last_name, user_id];
+    }
+    
+    global.db.run(updateUserQuery, params, function(err) {
+        if (err) {
+            console.error(err.message);
+            res.status(500).send({ error: err.message }); // Отправляем статус ошибки и сообщение об ошибке
+        } else {
+            // В случае успешного обновления, редиректим пользователя на страницу профиля или другую подходящую страницу
+            res.redirect('/users/settings');
+        }
+    });
+};
+
+
+
 module.exports = {
     listUsers,
     addUserPage,
@@ -163,5 +240,7 @@ module.exports = {
     addComment,
     loginPage,
     login,
-    addUser
+    addUser,
+    profileSettingsPage,
+    updateProfile
 };

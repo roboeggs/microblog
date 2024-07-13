@@ -1,0 +1,70 @@
+<h1>Profile Settings</h1>
+<div class="content__profile">
+    <ul class="content__list">
+        <li class="content__label account-label selected" data-target="account">
+            <div class="content__account">^_^</div>
+            <span>Account</span>
+        </li>
+        <li class="content__label password-label" data-target="password">
+            <div class="content__account">:~X</div>
+            <span>Password</span>
+        </li>
+    </ul>
+
+    <form  action="/users/settings" method="post" id="profileForm">
+        <div id="accountFields">
+            <label for="first_name"><b>First name</b></label>
+            <input class="content__field" type="text" name="first_name" id="first_name" value="<%= user.firstName %>" required>
+        
+            <label for="last_name"><b>Last name</b></label>
+            <input class="content__field" type="text" name="last_name" id="last_name" value="<%= user.lastName %>" required>
+        </div>
+
+        <div id="passwordFields" style="display: none;">
+            <label for="psw"><b>New Password</b></label>
+            <input class="content__field" type="password" placeholder="Enter New Password" name="psw" id="psw">
+
+            <label for="psw_repeat"><b>Repeat Password</b></label>
+            <input class="content__field" type="password" placeholder="Repeat New Password" name="psw_repeat" id="psw_repeat">
+        </div>
+
+        <button class="registerbtn" type="submit">Save changes</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileForm = document.getElementById('profileForm');
+        const accountLabel = document.querySelector('.account-label');
+        const passwordLabel = document.querySelector('.password-label');
+        const accountFields = document.getElementById('accountFields');
+        const passwordFields = document.getElementById('passwordFields');
+
+        // Функция для переключения между account и password
+        function toggleFormFields(target) {
+            if (target === 'account') {
+                accountFields.style.display = 'block';
+                passwordFields.style.display = 'none';
+            } else if (target === 'password') {
+                accountFields.style.display = 'none';
+                passwordFields.style.display = 'block';
+            }
+        }
+
+        // Начальная установка полей формы при загрузке страницы
+        toggleFormFields(accountLabel.getAttribute('data-target'));
+
+        // Обработчики кликов по li элементам
+        accountLabel.addEventListener('click', function() {
+            accountLabel.classList.add('selected');
+            passwordLabel.classList.remove('selected');
+            toggleFormFields('account');
+        });
+
+        passwordLabel.addEventListener('click', function() {
+            passwordLabel.classList.add('selected');
+            accountLabel.classList.remove('selected');
+            toggleFormFields('password');
+        });
+    });
+</script>
