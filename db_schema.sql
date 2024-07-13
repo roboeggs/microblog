@@ -26,6 +26,11 @@ CREATE TABLE IF NOT EXISTS articles (
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     status TEXT NOT NULL,
+    created DATETIME,
+    published DATETIME,
+    likes INTEGER DEFAULT 0,
+    last_change DATETIME,
+    removed_from_publication_views DATETIME,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 

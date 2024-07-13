@@ -1,5 +1,6 @@
 <b>&lt;/&gt;</b>
 <a href="/users/settings" target="_self">setting</a>
+
 <h2>Drafts</h2>
 <form action="/users/action" method="post">
     <table class="content__table">
@@ -12,28 +13,21 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><input type="checkbox" id="capybara" name="capybara"></td>
-                <td><label for="capybara">Capybara</label></td>
-                <td>2022.07.15 21:15</td>
-                <td>2022.07.15 21:15</td>
-            </tr>
-            <!-- Add more rows as needed -->
             <% articles.forEach((article) => { %>
                 <% if (article.status === 'draft') { %>
-                    <tr>
+                    <tr class="highlight-on-hover">
                         <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
-                        <td><label for="<%= article.article_id %>"><%= article.title %></label></td>
-                        <td>2022.07.15 21:15</td>
-                        <td>2022.07.15 21:15</td>
+                        <td><label for="<%= article.article_id %>"><a href="/users/create/<%= article.article_id %>"><%= article.title %></a></label></td>
+                        <td><%= formatDateTime(article.created) %></td>
+                        <td><%= formatDateTime(article.last_change) %></td>
                     </tr>
                 <% } %>
             <% }); %>
         </tbody>
     </table>
 
-    <a href="/users/create" target="_self" class="">Create new</a>
-
+    <a href="/users/create" target="_self" class="registerbtn">Create new</a>
+    <br>
     <label for="action">Actions:</label>
 
     <select id="action" name="action">
@@ -41,8 +35,8 @@
         <option value="del">Remove</option>
     </select>
     <button type="submit" class="registerbtn">Apply</button>
-
 </form>
+
 <h2>Published articles</h2>
 <form action="/users/action" method="post">
     <table class="content__table">
@@ -57,34 +51,24 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><input type="checkbox" id="where_node" name="where_node"></td>
-                <td><label for="where_node">Where Node</label></td>
-                <td>2022.07.15 21:15</td>
-                <td>2022.07.20 08:13</td>
-                <td>56</td>
-                <td>2022.07.15 21:15</td>
-            </tr>
-            <!-- Add more rows as needed -->
             <% articles.forEach((article) => { %>
                 <% if (article.status === 'pub') { %>
-                    <tr>
+                    <tr class="highlight-on-hover">
                         <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
-                        <td><label for="<%= article.article_id %>"><%= article.title %></label></td>
-                        <td>2022.07.15 21:15</td>
-                        <td>2022.07.20 08:13</td>
-                        <td>56</td>
-                        <td>2022.07.15 21:15</td>
+                        <td><label for="<%= article.article_id %>"><a href="/users/create/<%= article.article_id %>"><%= article.title %></a></label></td>
+                        <td><%= formatDateTime(article.created) %></td>
+                        <td><%= formatDateTime(article.published) %></td>
+                        <td><%= article.likes %></td>
+                        <td><%= formatDateTime(article.last_change) %></td>
                     </tr>
                 <% } %>
             <% }); %>
         </tbody>
     </table>
     <button type="submit"  name="action" value="take_off" class="registerbtn">Remove from publication</button>
-
 </form>
-<h2>All articles</h2>
 
+<h2>All articles</h2>
 <form action="/users/action" method="post">
     <table class="content__table">
         <thead>
@@ -99,27 +83,18 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><input type="checkbox" id="where_node" name="where_node"></td>
-                <td><label for="where_node">Where Node</label></td>
-                <td>2022.07.15 21:15</td>
-                <td>2022.07.20 08:13</td>
-                <td>56</td>
-                <td>2022.07.15 21:15</td>
-                <td></td>
-            </tr>
             <% articles.forEach((article) => { %>
-            <tr class="highlight-on-hover">
-                <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
-                <td><label for="<%= article.article_id %>">
-                    <a href="/users/create/<%= article.article_id %>"><%= article.title %></a>
-                </label></td>
-                <td><%= article.created %></td>
-                <td><%= article.published %></td>
-                <td><%= article.likes %></td>
-                <td><%= article.last_change %></td>
-                <td><%= article.removed_from_publication %></td>
-            </tr>
+                <tr class="highlight-on-hover">
+                    <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
+                    <td><label for="<%= article.article_id %>">
+                        <a href="/users/create/<%= article.article_id %>"><%= article.title %></a>
+                    </label></td>
+                    <td><%= formatDateTime(article.created) %></td>
+                    <td><%= formatDateTime(article.published) %></td>
+                    <td><%= article.likes %></td>
+                    <td><%= formatDateTime(article.last_change) %></td>
+                    <td><%= formatDateTime(article.removed_from_publication_views) %></td>
+                </tr>
             <% }); %>
         </tbody>
     </table>
@@ -130,5 +105,27 @@
         <option value="del">Remove</option>
     </select>
     <button type="submit" class="registerbtn">Apply</button>
-
 </form>
+
+
+<% function formatDateTime(dateTimeStr) {
+    if (!dateTimeStr) {
+        return ''; // Если dateTimeStr пустое или неопределено, возвращаем пустую строку или другое значение по умолчанию
+    }
+    
+    try {
+        const dateObj = new Date(dateTimeStr);
+        if (isNaN(dateObj.getTime())) {
+            throw new Error('Invalid date');
+        }
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const hours = String(dateObj.getHours()).padStart(2, '0');
+        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+        return `${year}.${month}.${day} ${hours}:${minutes}`;
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return ''; // Возвращаем пустую строку или другое значение по умолчанию при ошибке
+    }
+} %>

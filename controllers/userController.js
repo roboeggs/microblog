@@ -37,8 +37,14 @@ const createArticle = (req, res) => {
     const user = req.user;
     const { title, body: content } = req.body;
     const status = "draft";
-    const query = "INSERT INTO articles (user_id, title, content, status) VALUES (?, ?, ?, ?);";
-    const query_parameters = [user.id, title, content, status];
+    const currentTime = new Date().toISOString(); // Текущая дата и время в формате ISO
+
+    const query = `
+        INSERT INTO articles (user_id, title, content, status, created, last_change)
+        VALUES (?, ?, ?, ?, ?, ?);
+    `;
+    const query_parameters = [user.id, title, content, status, currentTime, currentTime];
+
     global.db.run(query, query_parameters, function (err) {
         if (err) {
             res.status(400).send({ error: err.message });
@@ -48,34 +54,149 @@ const createArticle = (req, res) => {
     });
 };
 
+
+
+
+const updateArticle = (req, res) => {
+    const user = req.user;
+    const articleId = req.params.articleId;
+    const { title, body: content } = req.body;
+
+    // Получаем текущее время
+    const currentTime = new Date().toISOString();
+
+    const query = `
+        UPDATE articles
+        SET title = ?,
+            content = ?,
+            last_change = ?
+        WHERE user_id = ? AND article_id = ?;
+    `;
+    const query_parameters = [title, content, currentTime, user.id, articleId];
+
+    global.db.run(query, query_parameters, function (err) {
+        if (err) {
+            res.status(400).send({ error: err.message });
+            return;
+        }
+        res.redirect('/users/home-page');
+    });
+};
+
+
+
+
+/** 
 const articleAction = (req, res) => {
     const user = req.user;
     const { action } = req.body;
-    const articles = Object.keys(req.body).filter(key => key !== 'action');
+    const articles = Object.keys(req.body)
+        .filter(key => key !== 'action')
+        .map(key => Number(key));
+
+    if (articles.some(isNaN)) {
+        res.status(400).send({ error: 'Invalid article ID' });
+        return;
+    }
+
     let query, queryParameters;
     switch (action) {
         case 'pub':
-            query = "UPDATE articles SET status = 'pub' WHERE article_id IN (?) AND user_id = ?;";
-            queryParameters = [articles.join(','), user.id];
+            query = `UPDATE articles SET status = 'pub' WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
+            queryParameters = [...articles, user.id];
             break;
         case 'del':
-            query = "DELETE FROM articles WHERE article_id IN (?) AND user_id = ?;";
-            queryParameters = [articles.join(','), user.id];
+            query = `DELETE FROM articles WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
+            queryParameters = [...articles, user.id];
             break;
         case 'take_off':
-            query = "UPDATE articles SET status = 'draft' WHERE article_id IN (?) AND user_id = ?;";
-            queryParameters = [articles.join(','), user.id];
+            query = `UPDATE articles SET status = 'draft' WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
+            queryParameters = [...articles, user.id];
             break;
         default:
             res.status(400).send({ error: 'Unknown action' });
             return;
     }
+
     global.db.run(query, queryParameters, function (err) {
         if (err) {
             res.status(400).send({ error: err.message });
             return;
         }
         res.redirect('/users/home-page');
+    });
+};
+
+*/
+
+const articleAction = (req, res) => {
+    const user = req.user;
+    const { action } = req.body;
+    const articles = Object.keys(req.body)
+        .filter(key => key !== 'action')
+        .map(key => Number(key));
+
+    if (articles.some(isNaN)) {
+        res.status(400).send({ error: 'Invalid article ID' });
+        return;
+    }
+
+    let query, queryParameters;
+    const currentTime = new Date().toISOString(); // Текущая дата и время в формате ISO
+
+    switch (action) {
+        case 'pub':
+            query = `UPDATE articles SET status = 'pub', published = ? WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
+            queryParameters = [currentTime, ...articles, user.id];
+            break;
+        case 'del':
+            query = `DELETE FROM articles WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
+            queryParameters = [...articles, user.id];
+            break;
+        case 'take_off':
+            query = `UPDATE articles SET status = 'draft', removed_from_publication_views = ? WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
+            queryParameters = [currentTime, ...articles, user.id];
+            break;
+        default:
+            res.status(400).send({ error: 'Unknown action' });
+            return;
+    }
+
+    global.db.run(query, queryParameters, function (err) {
+        if (err) {
+            res.status(400).send({ error: err.message });
+            return;
+        }
+        res.redirect('/users/home-page');
+    });
+};
+
+const likeArticle = (req, res) => {
+    const articleId = req.params.articleId;
+
+    // Проверка наличия articleId
+    if (!articleId) {
+        return res.status(400).send('Article ID is required');
+    }
+
+    // Увеличиваем количество лайков в базе данных
+    const query = "UPDATE articles SET likes = likes + 1 WHERE article_id = ?;";
+    const queryParameters = [articleId];
+
+    global.db.run(query, queryParameters, function(err) {
+        if (err) {
+            console.error('Error in likeArticle:', err);
+            res.status(500).send({ error: 'Internal Server Error' });
+            return;
+        }
+
+        // Проверяем, была ли обновлена какая-либо запись
+        if (this.changes === 0) {
+            return res.status(404).send('Article not found');
+        }
+
+        // Возвращаемся на страницу с деталями статьи после лайка
+        res.redirect(`/articles/${articleId}`);
     });
 };
 
@@ -189,23 +310,30 @@ const profileSettingsPage = (req, res) => {
 
 const updateProfile = (req, res) => {
     const user_id = req.user.id; // Получаем ID пользователя из объекта запроса (предположим, что он доступен через req.user)
-    const { first_name, last_name, psw } = req.body; // Извлекаем данные из тела запроса
+    const { first_name, last_name, psw, psw_repeat } = req.body; // Извлекаем данные из тела запроса
 
-    
-    console.log(first_name, last_name, psw)
+    console.log(req.body);
+    console.log(first_name, last_name, psw, psw_repeat)
 
     let updateUserQuery = '';
     let params = [];
 
     if (psw) {
-        // Если newPassword не пустой, значит пользователь хочет изменить пароль и данные профиля
-        updateUserQuery = `
-            UPDATE users
-            SET password = ?
-            WHERE user_id = ?;
-        `;
         params = [psw, user_id];
         console.log('это пароль');
+        if (psw === psw_repeat) {
+            // Если psw и psw_repeat одинаковы, обновляем пароль
+            updateUserQuery = `
+                UPDATE users
+                SET password = ?
+                WHERE user_id = ?;
+            `;
+            params = [psw, user_id];
+        } else {
+            // Если psw и psw_repeat не одинаковы, отправляем сообщение об ошибке
+            res.status(400).send({ error: "passwords don't match" });
+            return;
+        }
     } else {
         // Если newPassword пустой, значит пользователь хочет изменить только данные профиля
         updateUserQuery = `
@@ -235,6 +363,7 @@ module.exports = {
     addUserPage,
     createArticlePage,
     createArticle,
+    updateArticle,
     articleAction,
     homePage,
     addComment,
@@ -242,5 +371,6 @@ module.exports = {
     login,
     addUser,
     profileSettingsPage,
-    updateProfile
+    updateProfile,
+    likeArticle
 };

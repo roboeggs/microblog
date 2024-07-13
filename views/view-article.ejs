@@ -1,6 +1,8 @@
 <h1><%= article.title %></h1>
 <p><%= article.content %></p>
-
+<form action="/users/article/like/<%= article.article_id %>" method="get">
+    <button type="submit" class="registerbtn">Like</button>
+</form>
 <hr>
 <form action="/users/comment/<%= article.article_id %>" method="post">
     <h3>Comments</h3>
