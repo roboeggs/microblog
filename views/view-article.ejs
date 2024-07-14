@@ -1,7 +1,24 @@
+<table class="content__table">
+    <thead>
+        <tr>
+            <th>Created</th>
+            <th>Last change</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><%= article.created %></td>
+            <td><%= article.last_change %></td>
+        </tr>
+    </tbody>
+</table>
+
 <h1><%= article.title %></h1>
 <p><%= article.content %></p>
+
 <form action="like/<%= article.article_id %>" method="get">
     <button type="submit" class="registerbtn">Like</button>
+    <span>Like it: <%= article.likes %> </span>
 </form>
 <hr>
 <form action="/users/comment/<%= article.article_id %>" method="post">
@@ -12,9 +29,9 @@
 <hr>
 <% comments.forEach(comment => { %>
     <div class="content__comments">
-            <div class="comment">
-                <span><b><%= comment.first_name %> <%= comment.last_name %></b></span>
-                <p><%= comment.comment %></p>
-            </div>
+        <div class="comment">
+            <span><b><%= comment.first_name %> <%= comment.last_name %></b> <%= timeAgo(comment.created) %></span>
+            <p><%= comment.comment %></p>
         </div>
+    </div>
 <% }); %>

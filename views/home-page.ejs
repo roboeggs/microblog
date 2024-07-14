@@ -1,8 +1,7 @@
 <h1> Author Home Page </h1>
-<h2>Title: [Название блога] </h2> 
+<h2>Title Blog: <%= user.blog %></h2> 
 <div class="content__author">
-    <h3> Author Name: <b>[Имя автора]</b></h3>
-    <h3>&lt;/&gt;</h3>
+    <h3> Author Name: <b><%= user.first_name %> <%= user.last_name %></b></h3>
     <a href="/users/settings" target="_self"><h3><b>Setting &gt;</b></h3></a>
 </div>
 <h2>Drafts</h2>
@@ -23,8 +22,8 @@
                     <tr class="highlight-on-hover">
                         <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
                         <td title="View the article"><label for="<%= article.article_id %>"><a href="/article/<%= article.article_id %>"><%= article.title %></a></label></td>
-                        <td><%= formatDateTime(article.created) %></td>
-                        <td><%= formatDateTime(article.last_change) %></td>
+                        <td><%= article.created %></td>
+                        <td><%= article.last_change %></td>
                         <td> <a href="/users/create/<%= article.article_id %>" target="_self">Edit</a></td>
                     </tr>
                 <% } %>
@@ -52,8 +51,10 @@
                 <th>Title</th>
                 <th>Created</th>
                 <th>Published</th>
-                <th>Likes</th>
                 <th>Last change</th>
+                <th>Likes</th>
+                <th>Views</th>
+                <th>Share</th>
             </tr>
         </thead>
         <tbody>
@@ -61,11 +62,13 @@
                 <% if (article.status === 'pub') { %>
                     <tr class="highlight-on-hover">
                         <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
-                        <td><label for="<%= article.article_id %>"><a href="/users/create/<%= article.article_id %>"><%= article.title %></a></label></td>
-                        <td><%= formatDateTime(article.created) %></td>
-                        <td><%= formatDateTime(article.published) %></td>
+                        <td title="View the article"><label for="<%= article.article_id %>"><a href="/article/<%= article.article_id %>"><%= article.title %></a></label></td>
+                        <td><%= article.created %></td>
+                        <td><%= article.published %></td>
+                        <td><%= article.last_change %></td>
                         <td><%= article.likes %></td>
-                        <td><%= formatDateTime(article.last_change) %></td>
+                        <td><%= article.views %></td>
+                        <td><a href="javascript:void(0);" onclick="showPopup('/article/<%= article.article_id %>')">Copy</a></td>
                     </tr>
                 <% } %>
             <% }); %>
@@ -83,23 +86,27 @@
                 <th>Title</th>
                 <th>Created</th>
                 <th>Published</th>
-                <th>Likes</th>
                 <th>Last change</th>
                 <th>Removed from publication</th>
+                <th>Likes</th>
+                <th>Views</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             <% articles.forEach((article) => { %>
                 <tr class="highlight-on-hover">
                     <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
-                    <td><label for="<%= article.article_id %>">
-                        <a href="/users/create/<%= article.article_id %>"><%= article.title %></a>
+                    <td title="View the article"><label for="<%= article.article_id %>">
+                        <a href="/article/<%= article.article_id %>"><%= article.title %></a>
                     </label></td>
-                    <td><%= formatDateTime(article.created) %></td>
-                    <td><%= formatDateTime(article.published) %></td>
+                    <td><%= article.created %></td>
+                    <td><%= article.published %></td>
+                    <td><%= article.last_change %></td>
+                    <td><%= article.removed_from_publication_views %></td>
                     <td><%= article.likes %></td>
-                    <td><%= formatDateTime(article.last_change) %></td>
-                    <td><%= formatDateTime(article.removed_from_publication_views) %></td>
+                    <td><%= article.views %></td>
+                    <td> <a href="/users/create/<%= article.article_id %>" target="_self">Edit</a></td>
                 </tr>
             <% }); %>
         </tbody>
@@ -113,25 +120,8 @@
     <button type="submit" class="registerbtn">Apply</button>
 </form>
 
-
-<% function formatDateTime(dateTimeStr) {
-    if (!dateTimeStr) {
-        return ''; // Если dateTimeStr пустое или неопределено, возвращаем пустую строку или другое значение по умолчанию
+<script>
+    function showPopup(url) {
+        alert("http://localhost:3000/article/" + url);
     }
-    
-    try {
-        const dateObj = new Date(dateTimeStr);
-        if (isNaN(dateObj.getTime())) {
-            throw new Error('Invalid date');
-        }
-        const year = dateObj.getFullYear();
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const day = String(dateObj.getDate()).padStart(2, '0');
-        const hours = String(dateObj.getHours()).padStart(2, '0');
-        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-        return `${year}.${month}.${day} ${hours}:${minutes}`;
-    } catch (error) {
-        console.error('Error formatting date:', error);
-        return ''; // Возвращаем пустую строку или другое значение по умолчанию при ошибке
-    }
-} %>
+</script>

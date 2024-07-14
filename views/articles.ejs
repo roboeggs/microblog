@@ -1,10 +1,11 @@
 <h1 class="content__title">Articles</h1>
 
-<% if (articles) { %>
+<% if (articles && articles.length > 0) { %>
     <% articles.forEach((article) => { %>
         <div class="content__article">
             <div>
-                <span><b><%= article.name.first  %> <%= article.name.last  %></b> <%= timeAgo(article.published) %></span>
+                <p><%= article.name.blog  %></p>
+                <span>Blog by <b><%= article.name.first  %> <%= article.name.last  %></b> <%= timeAgo(article.published) %></span>
                 <h2><a href="/article/<%= article.article_id %>"><%= article.title %></a></h2>
             </div>
             <p class="content__content"><%= article.content %></p>
@@ -31,30 +32,3 @@
     <p>You can be the first.</p>
     <a class="registerbtn" href="/users/home-page" target="_self">Create an article?</a>
 <% } %>
-
-
-<% function timeAgo(dateTimeStr) {
-    if (!dateTimeStr) {
-        return ''; // Если dateTimeStr пустое или неопределено, возвращаем пустую строку или другое значение по умолчанию
-    }
-
-    const dateObj = new Date(dateTimeStr);
-    const now = new Date();
-    const diff = now - dateObj; // Разница во времени в миллисекундах
-
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) {
-        return `${days} days ago`;
-    } else if (hours > 0) {
-        return `${hours} hours ago`;
-    } else if (minutes > 0) {
-        return `${minutes} minutes ago`;
-    } else {
-        return `${seconds} seconds ago`;
-    }
-} %>
-

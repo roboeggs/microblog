@@ -1,8 +1,31 @@
-<h1>Title</h1>
+<h1>The editor of the article</h1>
+<div class="content__author">
+    <h2>Title</h2>
+    <a href="/users/home-page" target="_self"><h3><b>&lt; Back</b></h3></a>
+</div>
+
+<% if (article) { %>
+    <table class="content__table">
+        <thead>
+            <tr>
+                <th>Created</th>
+                <th>Last change</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><%= article.created %></td>
+                <td><%= article.last_change %></td>
+            </tr>
+        </tbody>
+    </table>
+
+<% } %>
+
 <form action="<%= article ? '/users/update/' + article.article_id : 'create' %>" method="post">
     <textarea class="content__textarea" name="title" rows="1" maxlength="70"><%= article ? article.title : '' %></textarea>
     <br>
-    <h2>Body</h2>
+    <h3>Body</h3>
     <textarea class="content__textarea" name="body" rows="4""><%= article ? article.content : '' %></textarea>
     <button type="submit" class="registerbtn">Submit</button>
 </form>

@@ -18,11 +18,14 @@
 
     <form  action="/users/settings" method="post" id="profileForm">
         <div id="accountFields">
+            <label for="blog_name"><b>The name of the blog</b></label>
+            <input class="content__field" type="text" name="blog" id="blog_name" value="<%= user.blog %>" required>
+
             <label for="first_name"><b>First name</b></label>
-            <input class="content__field" type="text" name="first_name" id="first_name" value="<%= user.firstName %>" required>
+            <input class="content__field" type="text" name="first_name" id="first_name" value="<%= user.first_name %>" required>
         
             <label for="last_name"><b>Last name</b></label>
-            <input class="content__field" type="text" name="last_name" id="last_name" value="<%= user.lastName %>" required>
+            <input class="content__field" type="text" name="last_name" id="last_name" value="<%= user.last_name %>" required>
         </div>
 
         <div id="passwordFields" style="display: none;">

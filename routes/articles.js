@@ -1,11 +1,12 @@
 // routes/articles.js
 
 const express = require('express');
+const helpers = require('../utils/helpers');
 const router = express.Router();
 
 // Handle requests to the home page
 router.get('/', (req, res) => {
-    const query = "SELECT * FROM articles;";
+    const query = "SELECT * FROM articles WHERE status = 'pub';";
 
     global.db.all(query, function (err, articles) {
         if (err) {
@@ -16,7 +17,7 @@ router.get('/', (req, res) => {
 
         const promises = articles.map(article => {
             return new Promise((resolve, reject) => {
-                const userQuery = `SELECT first_name, last_name FROM users WHERE user_id = ${article.user_id};`;
+                const userQuery = `SELECT blog, first_name, last_name FROM users WHERE user_id = ${article.user_id};`;
                 const commentQuery = `SELECT COUNT(*) as commentCount FROM comments WHERE article_id = ${article.article_id};`;
 
                 global.db.get(userQuery, (err, user) => {
@@ -26,7 +27,7 @@ router.get('/', (req, res) => {
                         return;
                     }
 
-                    article.name = { first: user.first_name, last: user.last_name };
+                    article.name = { blog: user.blog, first: user.first_name, last: user.last_name};
 
                     global.db.get(commentQuery, (err, comment) => {
                         if (err) {
@@ -36,7 +37,7 @@ router.get('/', (req, res) => {
                         }
 
                         article.commentCount = comment.commentCount;
-
+                        console.log(article)
                         resolve();
                     });
                 });
@@ -45,7 +46,7 @@ router.get('/', (req, res) => {
 
         Promise.all(promises)
             .then(() => {
-                res.render(res.locals.layout, {  title : 'Small Blog', content: 'articles', articles });
+                res.render(res.locals.layout, {  title : 'Small Blog', content: 'articles', articles, timeAgo: helpers.timeAgo });
             })
             .catch(err => {
                 console.error(err.message);
@@ -58,7 +59,7 @@ router.get('/article/:id', (req, res) => {
     const articleId = req.params.id;
     const articleQuery = `SELECT * FROM articles WHERE article_id = ?;`;
     const commentsQuery = `
-        SELECT comments.comment, comments.comment_id, users.first_name, users.last_name 
+        SELECT comments.comment, comments.comment_id, comments.created, users.first_name, users.last_name 
         FROM comments 
         JOIN users ON comments.user_id = users.user_id 
         WHERE comments.article_id = ?;
@@ -80,7 +81,7 @@ router.get('/article/:id', (req, res) => {
             }
 
             if (!article) {
-                res.status(404).send({ error: 'Статья не найдена' });
+                res.status(404).send({ error: 'The article was not found' });
                 return;
             }
 
@@ -90,8 +91,13 @@ router.get('/article/:id', (req, res) => {
                     res.status(400).send({ error: err.message });
                     return;
                 }
-
-                res.render(res.locals.layout, { title: article.title, content: 'view-article', article, comments });
+                
+                res.render(res.locals.layout, { 
+                    title: article.title, 
+                    content: 'view-article', 
+                    article, 
+                    comments, timeAgo: helpers.timeAgo 
+                });
             });
         });
     });

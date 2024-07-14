@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const helpers = require('../utils/helpers');
 const SECRET_KEY = 'small-blog-key';
 
 const listUsers = (req, res, next) => {
@@ -37,20 +38,21 @@ const createArticle = (req, res) => {
     const user = req.user;
     const { title, body: content } = req.body;
     const status = "draft";
-    const currentTime = new Date().toISOString(); // Текущая дата и время в формате ISO
 
     const query = `
         INSERT INTO articles (user_id, title, content, status, created, last_change)
-        VALUES (?, ?, ?, ?, ?, ?);
+        VALUES (?, ?, ?, ?, datetime('now', 'localtime'), datetime('now', 'localtime'));
     `;
-    const query_parameters = [user.id, title, content, status, currentTime, currentTime];
+    const query_parameters = [user.id, title, content, status];
 
     global.db.run(query, query_parameters, function (err) {
         if (err) {
             res.status(400).send({ error: err.message });
             return;
         }
-        res.redirect('/users/home-page');
+        const articleId = this.lastID; // Получаем ID вставленной статьи
+        console.log(articleId)
+        res.redirect(`/users/create/${articleId}`);
     });
 };
 
@@ -62,72 +64,26 @@ const updateArticle = (req, res) => {
     const articleId = req.params.articleId;
     const { title, body: content } = req.body;
 
-    // Получаем текущее время
-    const currentTime = new Date().toISOString();
-
     const query = `
         UPDATE articles
         SET title = ?,
             content = ?,
-            last_change = ?
+            last_change = datetime('now', 'localtime')
         WHERE user_id = ? AND article_id = ?;
     `;
-    const query_parameters = [title, content, currentTime, user.id, articleId];
+    const query_parameters = [title, content, user.id, articleId];
 
     global.db.run(query, query_parameters, function (err) {
         if (err) {
             res.status(400).send({ error: err.message });
             return;
         }
-        res.redirect('/users/home-page');
+        res.redirect(`/users/create/${articleId}`);
     });
 };
 
 
 
-
-/** 
-const articleAction = (req, res) => {
-    const user = req.user;
-    const { action } = req.body;
-    const articles = Object.keys(req.body)
-        .filter(key => key !== 'action')
-        .map(key => Number(key));
-
-    if (articles.some(isNaN)) {
-        res.status(400).send({ error: 'Invalid article ID' });
-        return;
-    }
-
-    let query, queryParameters;
-    switch (action) {
-        case 'pub':
-            query = `UPDATE articles SET status = 'pub' WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
-            queryParameters = [...articles, user.id];
-            break;
-        case 'del':
-            query = `DELETE FROM articles WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
-            queryParameters = [...articles, user.id];
-            break;
-        case 'take_off':
-            query = `UPDATE articles SET status = 'draft' WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
-            queryParameters = [...articles, user.id];
-            break;
-        default:
-            res.status(400).send({ error: 'Unknown action' });
-            return;
-    }
-
-    global.db.run(query, queryParameters, function (err) {
-        if (err) {
-            res.status(400).send({ error: err.message });
-            return;
-        }
-        res.redirect('/users/home-page');
-    });
-};
-
-*/
 
 const articleAction = (req, res) => {
     const user = req.user;
@@ -146,16 +102,18 @@ const articleAction = (req, res) => {
 
     switch (action) {
         case 'pub':
-            query = `UPDATE articles SET status = 'pub', published = ? WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
-            queryParameters = [currentTime, ...articles, user.id];
+            query = `UPDATE articles SET status = 'pub', published = datetime('now', 'localtime') 
+            WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
+            queryParameters = [...articles, user.id];
             break;
         case 'del':
             query = `DELETE FROM articles WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
             queryParameters = [...articles, user.id];
             break;
         case 'take_off':
-            query = `UPDATE articles SET status = 'draft', removed_from_publication_views = ? WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
-            queryParameters = [currentTime, ...articles, user.id];
+            query = `UPDATE articles SET status = 'draft', removed_from_publication_views = datetime('now', 'localtime') 
+            WHERE article_id IN (${articles.map(() => '?').join(',')}) AND user_id = ?;`;
+            queryParameters = [...articles, user.id];
             break;
         default:
             res.status(400).send({ error: 'Unknown action' });
@@ -175,14 +133,29 @@ const articleAction = (req, res) => {
 
 const homePage = (req, res) => {
     const user = req.user;
-    const query = "SELECT * FROM articles WHERE user_id = ?;";
+    const userQuery = "SELECT * FROM users WHERE user_id = ?;";
+    const articlesQuery = "SELECT * FROM articles WHERE user_id = ?;";
     const query_parameters = [user.id];
-    global.db.all(query, query_parameters, function (err, articles) {
+
+    global.db.get(userQuery, query_parameters, function (err, userInfo) {
         if (err) {
             res.status(400).send({ error: err.message });
             return;
         }
-        res.render(res.locals.layout, { title : 'Home page', content: 'home-page', user, articles });
+
+        global.db.all(articlesQuery, query_parameters, function (err, articles) {
+            if (err) {
+                res.status(400).send({ error: err.message });
+                return;
+            }
+
+            res.render(res.locals.layout, {
+                title: 'Home page',
+                content: 'home-page',
+                user: userInfo,
+                articles
+            });
+        });
     });
 };
 
@@ -261,27 +234,23 @@ const profileSettingsPage = (req, res) => {
 
     // Запрос к базе данных для получения имени и фамилии пользователя
     const query = `
-        SELECT first_name, last_name 
+        SELECT blog, first_name, last_name 
         FROM users 
         WHERE user_id = ?;
     `;
 
-    global.db.get(query, [userId], (err, row) => {
+    global.db.get(query, [userId], (err, user) => {
         if (err) {
             console.error(err.message);
             res.status(500).send({ error: err.message });
             return;
         }
 
-        if (!row) {
+        if (!user) {
             res.status(404).send({ error: 'Пользователь не найден' });
             return;
         }
 
-        const user = {
-            firstName: row.first_name,
-            lastName: row.last_name
-        };
 
         // Рендерим страницу настроек профиля и передаем данные пользователя в шаблон
         res.render(res.locals.layout, {  title : 'Setting', content: 'profile-settings', user });
@@ -291,10 +260,10 @@ const profileSettingsPage = (req, res) => {
 
 const updateProfile = (req, res) => {
     const user_id = req.user.id; // Получаем ID пользователя из объекта запроса (предположим, что он доступен через req.user)
-    const { first_name, last_name, psw, psw_repeat } = req.body; // Извлекаем данные из тела запроса
+    const { blog, first_name, last_name, psw, psw_repeat } = req.body; // Извлекаем данные из тела запроса
 
     console.log(req.body);
-    console.log(first_name, last_name, psw, psw_repeat)
+    console.log(blog, first_name, last_name, psw, psw_repeat)
 
     let updateUserQuery = '';
     let params = [];
@@ -319,11 +288,13 @@ const updateProfile = (req, res) => {
         // Если newPassword пустой, значит пользователь хочет изменить только данные профиля
         updateUserQuery = `
             UPDATE users
-            SET first_name = ?,
+            SET 
+                blog = ?,
+                first_name = ?,
                 last_name = ?
             WHERE user_id = ?;
         `;
-        params = [first_name, last_name, user_id];
+        params = [blog, first_name, last_name, user_id];
     }
     
     global.db.run(updateUserQuery, params, function(err) {
