@@ -6,7 +6,7 @@
             <div>
                 <p><%= article.name.blog  %></p>
                 <span>Blog by <b><%= article.name.first  %> <%= article.name.last  %></b> <%= timeAgo(article.published) %></span>
-                <h2><a href="/article/<%= article.article_id %>"><%= article.title %></a></h2>
+                <h2><a href="/reader/<%= article.article_id %>"><%= article.title %></a></h2>
             </div>
             <p class="content__content"><%= article.content %></p>
             <table class="">
@@ -30,5 +30,5 @@
 <% } else { %>
     <h2>Nothing here :(</h2>
     <p>You can be the first.</p>
-    <a class="registerbtn" href="/users/home-page" target="_self">Create an article?</a>
+    <a class="registerbtn" href="/author/home-page" target="_self">Create an article?</a>
 <% } %>

@@ -1,7 +1,7 @@
 <h1>The editor of the article</h1>
 <div class="content__author">
     <h2>Title</h2>
-    <a href="/users/home-page" target="_self"><h3><b>&lt; Back</b></h3></a>
+    <a href="/author/home-page" target="_self"><h3><b>&lt; Back</b></h3></a>
 </div>
 
 <% if (article) { %>
@@ -22,7 +22,7 @@
 
 <% } %>
 
-<form action="<%= article ? '/users/update/' + article.article_id : 'create' %>" method="post">
+<form action="<%= article ? '/author/update/' + article.article_id : 'create' %>" method="post">
     <textarea class="content__textarea" name="title" rows="1" maxlength="70"><%= article ? article.title : '' %></textarea>
     <br>
     <h3>Body</h3>

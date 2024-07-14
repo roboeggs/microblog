@@ -35,12 +35,17 @@ app.use((req, res, next) => {
 app.use(cookieParser());
 
 // Add all the route handlers in usersRoutes to the app under the path /users
-const usersRoutes = require('./routes/users');
+const usersRoutes = require('./routes/user');
 app.use('/users', usersRoutes);
 
+const authorRoutes = require('./routes/author');
+app.use('/author', authorRoutes);
+
+const readerRoutes = require('./routes/articles');
+app.use('/reader', readerRoutes)
+
 // Add all the route handlers in articlesRoutes to the app under the path /
-const articlesRoutes = require('./routes/articles');
-app.use('/', articlesRoutes);
+app.use('/', authorRoutes);
 
 // Make the web application listen for HTTP requests
 app.listen(port, () => {

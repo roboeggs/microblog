@@ -21,7 +21,7 @@
     <span>Like it: <%= article.likes %> </span>
 </form>
 <hr>
-<form action="/users/comment/<%= article.article_id %>" method="post">
+<form action="/author/comment/<%= article.article_id %>" method="post">
     <h3>Comments</h3>
     <textarea class="content__textarea" name="comment" rows="2" minlength="1" placeholder="Your comment"></textarea>
     <button type="submit" class="registerbtn">Submit</button>

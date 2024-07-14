@@ -2,10 +2,10 @@
 <h2>Title Blog: <%= user.blog %></h2> 
 <div class="content__author">
     <h3> Author Name: <b><%= user.first_name %> <%= user.last_name %></b></h3>
-    <a href="/users/settings" target="_self"><h3><b>Setting &gt;</b></h3></a>
+    <a href="/author/settings" target="_self"><h3><b>Setting &gt;</b></h3></a>
 </div>
 <h2>Drafts</h2>
-<form action="/users/action" method="post">
+<form action="/author/action" method="post">
     <table class="content__table">
         <thead>
             <tr>
@@ -21,17 +21,17 @@
                 <% if (article.status === 'draft') { %>
                     <tr class="highlight-on-hover">
                         <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
-                        <td title="View the article"><label for="<%= article.article_id %>"><a href="/article/<%= article.article_id %>"><%= article.title %></a></label></td>
+                        <td title="View the article"><label for="<%= article.article_id %>"><a href="/reader/<%= article.article_id %>"><%= article.title %></a></label></td>
                         <td><%= article.created %></td>
                         <td><%= article.last_change %></td>
-                        <td> <a href="/users/create/<%= article.article_id %>" target="_self">Edit</a></td>
+                        <td> <a href="/author/create/<%= article.article_id %>" target="_self">Edit</a></td>
                     </tr>
                 <% } %>
             <% }); %>
         </tbody>
     </table>
 
-    <a href="/users/create" target="_self" class="registerbtn">Create new draft</a>
+    <a href="/author/create" target="_self" class="registerbtn">Create new draft</a>
     <br>
     <label for="action">Actions:</label>
 
@@ -43,7 +43,7 @@
 </form>
 
 <h2>Published articles</h2>
-<form action="/users/action" method="post">
+<form action="/author/action" method="post">
     <table class="content__table">
         <thead>
             <tr>
@@ -62,13 +62,13 @@
                 <% if (article.status === 'pub') { %>
                     <tr class="highlight-on-hover">
                         <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
-                        <td title="View the article"><label for="<%= article.article_id %>"><a href="/article/<%= article.article_id %>"><%= article.title %></a></label></td>
+                        <td title="View the article"><label for="<%= article.article_id %>"><a href="/reader/<%= article.article_id %>"><%= article.title %></a></label></td>
                         <td><%= article.created %></td>
                         <td><%= article.published %></td>
                         <td><%= article.last_change %></td>
                         <td><%= article.likes %></td>
                         <td><%= article.views %></td>
-                        <td><a href="javascript:void(0);" onclick="showPopup('/article/<%= article.article_id %>')">Copy</a></td>
+                        <td><a href="javascript:void(0);" onclick="showPopup('reader/<%= article.article_id %>')">Copy</a></td>
                     </tr>
                 <% } %>
             <% }); %>
@@ -78,7 +78,7 @@
 </form>
 
 <h2>All articles</h2>
-<form action="/users/action" method="post">
+<form action="/author/action" method="post">
     <table class="content__table">
         <thead>
             <tr>
@@ -88,8 +88,6 @@
                 <th>Published</th>
                 <th>Last change</th>
                 <th>Removed from publication</th>
-                <th>Likes</th>
-                <th>Views</th>
                 <th></th>
             </tr>
         </thead>
@@ -98,15 +96,13 @@
                 <tr class="highlight-on-hover">
                     <td><input type="checkbox" id="<%= article.article_id %>" name="<%= article.article_id %>"></td>
                     <td title="View the article"><label for="<%= article.article_id %>">
-                        <a href="/article/<%= article.article_id %>"><%= article.title %></a>
+                        <a href="/reader/<%= article.article_id %>"><%= article.title %></a>
                     </label></td>
                     <td><%= article.created %></td>
                     <td><%= article.published %></td>
                     <td><%= article.last_change %></td>
                     <td><%= article.removed_from_publication_views %></td>
-                    <td><%= article.likes %></td>
-                    <td><%= article.views %></td>
-                    <td> <a href="/users/create/<%= article.article_id %>" target="_self">Edit</a></td>
+                    <td> <a href="/author/create/<%= article.article_id %>" target="_self">Edit</a></td>
                 </tr>
             <% }); %>
         </tbody>
@@ -122,6 +118,6 @@
 
 <script>
     function showPopup(url) {
-        alert("http://localhost:3000/article/" + url);
+        alert("http://localhost:3000/reader/" + url);
     }
 </script>
