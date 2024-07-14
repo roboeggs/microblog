@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS articles (
     likes INTEGER DEFAULT 0,
     last_change DATETIME,
     removed_from_publication_views DATETIME,
+    views INTEGER DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 

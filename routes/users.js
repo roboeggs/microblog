@@ -3,7 +3,6 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const auth = require('../middlewares/auth');
 
-router.get('/article/like/:articleId', userController.likeArticle);
 
 router.get("/list-users", userController.listUsers);
 router.get("/add-user", userController.addUserPage);
@@ -15,6 +14,7 @@ router.get("/home-page", auth.verifyToken, userController.homePage);
 router.post("/comment/:article_id", auth.verifyToken, userController.addComment);
 router.get("/login", userController.loginPage);
 router.post("/login", userController.login);
+router.post("/logout", userController.logout);
 router.post("/add-user", userController.addUser);
 
 // Route for profile settings page

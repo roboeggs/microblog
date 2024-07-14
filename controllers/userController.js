@@ -13,7 +13,7 @@ const listUsers = (req, res, next) => {
 };
 
 const addUserPage = (req, res) => {
-    res.render(res.locals.layout, { content: 'add-user' });
+    res.render(res.locals.layout, { title : 'Add user', content: 'add-user' });
 };
 
 const createArticlePage = (req, res) => {
@@ -26,10 +26,10 @@ const createArticlePage = (req, res) => {
                 res.status(400).send({ error: err.message });
                 return;
             }
-            res.render(res.locals.layout, { content: 'create', article });
+            res.render(res.locals.layout, { title : 'Create article', content: 'create', article });
         });
     } else {
-        res.render(res.locals.layout, { content: 'create', article: false });
+        res.render(res.locals.layout, { title : 'Create article', content: 'create', article: false });
     }
 };
 
@@ -171,34 +171,7 @@ const articleAction = (req, res) => {
     });
 };
 
-const likeArticle = (req, res) => {
-    const articleId = req.params.articleId;
 
-    // Проверка наличия articleId
-    if (!articleId) {
-        return res.status(400).send('Article ID is required');
-    }
-
-    // Увеличиваем количество лайков в базе данных
-    const query = "UPDATE articles SET likes = likes + 1 WHERE article_id = ?;";
-    const queryParameters = [articleId];
-
-    global.db.run(query, queryParameters, function(err) {
-        if (err) {
-            console.error('Error in likeArticle:', err);
-            res.status(500).send({ error: 'Internal Server Error' });
-            return;
-        }
-
-        // Проверяем, была ли обновлена какая-либо запись
-        if (this.changes === 0) {
-            return res.status(404).send('Article not found');
-        }
-
-        // Возвращаемся на страницу с деталями статьи после лайка
-        res.redirect(`/articles/${articleId}`);
-    });
-};
 
 const homePage = (req, res) => {
     const user = req.user;
@@ -209,7 +182,7 @@ const homePage = (req, res) => {
             res.status(400).send({ error: err.message });
             return;
         }
-        res.render(res.locals.layout, { content: 'home-page', user, articles });
+        res.render(res.locals.layout, { title : 'Home page', content: 'home-page', user, articles });
     });
 };
 
@@ -235,7 +208,7 @@ const addComment = (req, res) => {
 };
 
 const loginPage = (req, res) => {
-    res.render(res.locals.layout, { content: 'login' });
+    res.render(res.locals.layout, {  title : 'Log in to your account', content: 'login' });
 };
 
 const login = (req, res) => {
@@ -257,6 +230,11 @@ const login = (req, res) => {
     });
 };
 
+const logout = (req, res) => {
+    res.clearCookie('token'); // Удаляем cookie с именем 'token'
+    res.redirect('/'); // Перенаправляем пользователя на главную страницу или другую страницу
+};
+
 const addUser = (req, res) => {
     const { first_name, last_name, email, psw, psw_repeat } = req.body;
     if (psw !== psw_repeat) {
@@ -270,7 +248,10 @@ const addUser = (req, res) => {
             res.status(400).send({ error: err.message });
             return;
         }
-        res.redirect('/users/list-users');
+        const user_id = this.lastID; // Получаем ID вставленной записи
+        const token = jwt.sign({ id: user_id }, SECRET_KEY, { expiresIn: '4h' });
+        res.cookie('token', token, { httpOnly: true });
+        res.redirect('/users/home-page');
     });
 };
 
@@ -303,7 +284,7 @@ const profileSettingsPage = (req, res) => {
         };
 
         // Рендерим страницу настроек профиля и передаем данные пользователя в шаблон
-        res.render(res.locals.layout, { content: 'profile-settings', user });
+        res.render(res.locals.layout, {  title : 'Setting', content: 'profile-settings', user });
     });
 };
 
@@ -369,8 +350,8 @@ module.exports = {
     addComment,
     loginPage,
     login,
+    logout,
     addUser,
     profileSettingsPage,
-    updateProfile,
-    likeArticle
+    updateProfile
 };

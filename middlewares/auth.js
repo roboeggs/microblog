@@ -4,11 +4,11 @@ const SECRET_KEY = 'small-blog-key';
 const verifyToken = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
-        return res.sendStatus(403);
+        return res.redirect('/users/login');
     }
     jwt.verify(token, SECRET_KEY, (err, user) => {
         if (err) {
-            return res.sendStatus(403);
+            return res.redirect('/users/login');
         }
         req.user = user;
         next();

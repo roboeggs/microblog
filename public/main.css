@@ -1,4 +1,10 @@
 /* Define styles */
+
+a {
+    color: inherit; /* Устанавливает цвет текста, наследуемый от родительского элемента */
+    text-decoration: none; /* Убирает подчеркивание */
+}
+
 .page{
     background-color: #F4F4F4;
     min-height: 100vh;
@@ -98,6 +104,12 @@
     align-items: center;
     text-align: center;
     cursor: pointer;
+}
+
+.content__author{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .content__account:hover {
@@ -211,4 +223,6 @@
 .footer{ 
     margin-top: 15px;
     height: 60px;
+    display: flex;
+    justify-content: space-between;
 }
