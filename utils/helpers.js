@@ -6,10 +6,10 @@ function timeAgo(dateTimeStr) {
     const [hours, minutes, seconds] = timeStr.split(':').map(Number);
 
     const dateObj = new Date(year, month - 1, day, hours, minutes, seconds);
-    if (isNaN(dateObj.getTime())) return ''; // Проверка на некорректную дату
+    if (isNaN(dateObj.getTime())) return ''; // Checking for an incorrect date
 
     const now = new Date();
-    const diff = now - dateObj; // Разница во времени в миллисекундах
+    const diff = now - dateObj; // Time difference in milliseconds
 
     const secondsDiff = Math.floor(diff / 1000);
     const minutesDiff = Math.floor(secondsDiff / 60);

@@ -8,7 +8,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 var bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser'); // Middleware to parse cookies attached to the client request object
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs'); // set the app to use ejs for rendering
 app.set('views', __dirname + '/views'); // set the location of the views directory
@@ -32,23 +32,23 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(cookieParser());
+app.use(cookieParser()); // Using cookieParser to parse cookies
 
-// Add all the route handlers in usersRoutes to the app under the path /users
-const usersRoutes = require('./routes/user');
-app.use('/users', usersRoutes);
+// Importing route handlers
+const usersRoutes = require('./routes/user');   // Importing routes for users
+app.use('/users', usersRoutes); // Using user routes for paths starting with /users
 
-const authorRoutes = require('./routes/author');
-app.use('/author', authorRoutes);
+const authorRoutes = require('./routes/author');    // Importing routes for authors
+app.use('/author', authorRoutes);    // Using author routes for paths starting with /author
 
-const readerRoutes = require('./routes/articles');
-app.use('/reader', readerRoutes)
+const readerRoutes = require('./routes/articles');// Importing routes for readers
+app.use('/reader', readerRoutes) // Using reader routes for paths starting with /reader
 
 
 app.get('/', (req, res) => {
-    res.render(res.locals.layout, {
-        title: 'Main Home Page',
-        content: 'main-page',
+    res.render(res.locals.layout, { // Rendering the default layout
+        title: 'Main Home Page',   // Setting the title of the page
+        content: 'main-page',   // Setting the content of the page
     });
 });
 

@@ -42,13 +42,14 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Selecting necessary elements from the DOM
         const profileForm = document.getElementById('profileForm');
         const accountLabel = document.querySelector('.account-label');
         const passwordLabel = document.querySelector('.password-label');
         const accountFields = document.getElementById('accountFields');
         const passwordFields = document.getElementById('passwordFields');
 
-        // Функция для переключения между account и password
+        // Function to toggle between account and password fields
         function toggleFormFields(target) {
             if (target === 'account') {
                 accountFields.style.display = 'block';
@@ -59,16 +60,17 @@
             }
         }
 
-        // Начальная установка полей формы при загрузке страницы
+        // Initial setup of form fields when the page loads
         toggleFormFields(accountLabel.getAttribute('data-target'));
 
-        // Обработчики кликов по li элементам
+         // Click event listener for account label
         accountLabel.addEventListener('click', function() {
             accountLabel.classList.add('selected');
             passwordLabel.classList.remove('selected');
             toggleFormFields('account');
         });
-
+        
+         // Click event listener for password label
         passwordLabel.addEventListener('click', function() {
             passwordLabel.classList.add('selected');
             accountLabel.classList.remove('selected');

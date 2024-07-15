@@ -4,7 +4,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const SECRET_KEY = 'small-blog-key';
 
 
-// Валидация пользовательских данных
+// Function to validate user data
 const validateUser = (userData) => {
   const { first_name, last_name, email, psw, psw_repeat } = userData;
   if (!first_name || !last_name || !email || !psw || !psw_repeat) {
@@ -13,14 +13,14 @@ const validateUser = (userData) => {
   if (psw !== psw_repeat) {
     throw new Error("Passwords do not match");
   }
-  // Добавьте дополнительные проверки по необходимости
 };
 
-
+// Render add user page
 const addUserPage = (req, res) => {
   res.render(res.locals.layout, { title: 'Add user', content: 'add-user' });
 };
 
+// Render create article page or fetch article for editing
 const createArticlePage = asyncHandler(async (req, res) => {
   const articleId = req.params.articleId;
   let article = false;
@@ -43,6 +43,7 @@ const createArticle = asyncHandler(async (req, res) => {
   res.redirect(`/author/create/${result.lastID}`);
 });
 
+// Update an existing article
 const updateArticle = asyncHandler(async (req, res) => {
   const user = req.user;
   const articleId = req.params.articleId;
@@ -57,6 +58,8 @@ const updateArticle = asyncHandler(async (req, res) => {
   res.redirect(`/author/create/${articleId}`);
 });
 
+
+// Define actions on articles (publish, delete, take off)
 const articleActions = {
   pub: (articles, userId) => ({
     query: `UPDATE articles SET status = 'pub', published = datetime('now', 'localtime') 
@@ -82,6 +85,7 @@ const articleActions = {
   })
 };
 
+// Perform actions on articles (publish, delete, take off)
 const articleAction = asyncHandler(async (req, res) => {
   const user = req.user;
   const { action } = req.body;
@@ -101,18 +105,19 @@ const articleAction = asyncHandler(async (req, res) => {
   const actionData = actionFunction(articles, user.id);
 
   if (action === 'del') {
-    // Для действия удаления выполняем несколько запросов
+    // For delete action, execute multiple queries
     for (const queryData of actionData.queries) {
       await dbUtils.run(queryData.query, queryData.params);
     }
   } else {
-    // Для других действий выполняем один запрос
+    // For other actions, execute a single query
     await dbUtils.run(actionData.query, actionData.params);
   }
 
   res.redirect('/author/home-page');
 });
 
+// Render home page with user info and articles
 const homePage = asyncHandler(async (req, res) => {
   const user = req.user;
   const userInfo = await dbUtils.get("SELECT * FROM users WHERE user_id = ?;", [user.id]);
@@ -126,6 +131,7 @@ const homePage = asyncHandler(async (req, res) => {
   });
 });
 
+// Add a comment to an article
 const addComment = asyncHandler(async (req, res) => {
   const user = req.user;
   const { comment } = req.body;
@@ -139,10 +145,12 @@ const addComment = asyncHandler(async (req, res) => {
   res.redirect(`/reader/${article_id}`);
 });
 
+// Render login page
 const loginPage = (req, res) => {
   res.render(res.locals.layout, { title: 'Log in to your account', content: 'login' });
 };
 
+// Validate user credentials and generate JWT token for authentication
 const login = asyncHandler(async (req, res) => {
   const { email, psw } = req.body;
   const user = await dbUtils.get("SELECT * FROM users WHERE email = ?;", [email]);
@@ -161,6 +169,7 @@ const logout = (req, res) => {
   res.redirect('/');
 };
 
+// Register a new user
 const addUser = asyncHandler(async (req, res) => {
   const userData = req.body;
   validateUser(userData);
@@ -174,6 +183,7 @@ const addUser = asyncHandler(async (req, res) => {
   res.redirect('/author/home-page');
 });
 
+// Render profile settings page
 const profileSettingsPage = asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const user = await dbUtils.get("SELECT blog, first_name, last_name FROM users WHERE user_id = ?;", [userId]);
@@ -185,6 +195,7 @@ const profileSettingsPage = asyncHandler(async (req, res) => {
   res.render(res.locals.layout, { title: 'Setting', content: 'profile-settings', user });
 });
 
+// Update user profile information
 const updateProfile = asyncHandler(async (req, res) => {
   const user_id = req.user.id;
   const { blog, first_name, last_name, psw, psw_repeat } = req.body;
@@ -207,6 +218,7 @@ const updateProfile = asyncHandler(async (req, res) => {
   res.redirect('/author/settings');
 });
 
+// Export all functions to be used as controllers in routes
 module.exports = {
   addUserPage,
   createArticlePage,

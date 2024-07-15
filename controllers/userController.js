@@ -1,25 +1,16 @@
+// Import modules
 const dbUtils = require('../utils/dbUtils');
 const asyncHandler = require('../utils/asyncHandler');
 
-
-const listUsers = asyncHandler(async (req, res) => {
-    const rows = await dbUtils.all("SELECT * FROM users");
-    res.json(rows);
-  });
-
-
-const listComments = asyncHandler(async (req, res) => {
-    const rows = await dbUtils.all("SELECT * FROM comments");
+// Function to list data from a table
+const listData = (tableName) => asyncHandler(async (req, res) => {
+    const rows = await dbUtils.all(`SELECT * FROM ${tableName}`);
     res.json(rows);
 });
 
-const listArticles = asyncHandler(async (req, res) => {
-    const rows = await dbUtils.all("SELECT * FROM articles");
-    res.json(rows);
-});
-
+// Export functions
 module.exports = {
-    listUsers,
-    listComments,
-    listArticles
+    listUsers: listData('users'),
+    listComments: listData('comments'),
+    listArticles: listData('articles')
 }

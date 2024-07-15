@@ -1,4 +1,4 @@
-// Утилиты для работы с базой данных
+// Utilities for working with the database
 const dbUtils = {
     run: (query, params = []) => new Promise((resolve, reject) => {
       global.db.run(query, params, function(err) {
