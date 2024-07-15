@@ -3,34 +3,6 @@ const dbUtils = require('../utils/dbUtils');
 const asyncHandler = require('../utils/asyncHandler');
 
 const articleController = {
-  /** 
-  getArticles: asyncHandler(async (req, res) => {
-    const articles = await dbUtils.all("SELECT * FROM articles WHERE status = 'pub';");
-
-    const articlesWithDetails = await Promise.all(articles.map(async (article) => {
-      const userQuery = `SELECT blog, first_name, last_name FROM users WHERE user_id = ?;`;
-      const commentQuery = `SELECT COUNT(*) as commentCount FROM comments WHERE article_id = ?;`;
-
-      const [user, comment] = await Promise.all([
-        dbUtils.get(userQuery, [article.user_id]),
-        dbUtils.get(commentQuery, [article.article_id])
-      ]);
-
-      return {
-        ...article,
-        name: { blog: user.blog, first: user.first_name, last: user.last_name },
-        commentCount: comment.commentCount
-      };
-    }));
-
-    res.render(res.locals.layout, {
-      title: 'Small Blog',
-      content: 'articles',
-      articles: articlesWithDetails,
-      timeAgo: helpers.timeAgo
-    });
-  }),
-  */
 
   getArticles: asyncHandler(async (req, res) => {
     // Изменяем SQL-запрос, добавляя сортировку по дате создания (предполагая, что у вас есть поле created_at)

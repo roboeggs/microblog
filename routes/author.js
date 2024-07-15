@@ -3,8 +3,7 @@ const router = express.Router();
 const authorController = require('../controllers/authorController');
 const auth = require('../middlewares/auth');
 
-// Обработка запросов на главную страницу
-router.get('/', auth.verifyToken, authorController.homePage);
+
 
 router.get("/login", authorController.loginPage);
 router.post("/login", authorController.login);

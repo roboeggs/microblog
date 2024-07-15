@@ -3,8 +3,7 @@ PRAGMA foreign_keys=ON;
 
 BEGIN TRANSACTION;
 
--- Create your tables with SQL commands here (watch out for slight syntactical differences with SQLite vs MySQL)
-
+-- Create the users table
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
@@ -14,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT NOT NULL
 );
 
+-- Create the articles table
 CREATE TABLE IF NOT EXISTS articles (
     article_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS articles (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-
+-- Create the comments table
 CREATE TABLE IF NOT EXISTS comments (
     comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -40,13 +40,23 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (article_id) REFERENCES articles(article_id)
 );
 
--- Insert default data (if necessary here)
+-- Insert default data
+INSERT INTO users (first_name, last_name, email, blog, password) VALUES ('Simon', 'Star', 'simon@gmail.com', 'Simon''s Blog', 'password1');
+INSERT INTO users (first_name, last_name, email, blog, password) VALUES ('Dianne', 'Dean', 'dianne@yahoo.co.uk', 'Dianne''s Thoughts', 'password2');
+INSERT INTO users (first_name, last_name, email, blog, password) VALUES ('Harry', 'Hilbert', 'harry@hotmail.com', 'Harry''s World', 'password3');
 
--- Set up three users
-INSERT INTO users (first_name, last_name, email, password) VALUES ('Simon', 'Star', 'simon@gmail.com', 'password1');
-INSERT INTO users (first_name, last_name, email, password) VALUES ('Dianne', 'Dean', 'dianne@yahoo.co.uk', 'password2');
-INSERT INTO users (first_name, last_name, email, password) VALUES ('Harry', 'Hilbert', 'harry@hotmail.com', 'password3');
+INSERT INTO articles (user_id, title, content, status) VALUES (1, 'First Article by Simon', 'This is the content of the first article by Simon.', 'pub');
+INSERT INTO articles (user_id, title, content, status) VALUES (2, 'First Article by Dianne', 'This is the content of the first article by Dianne.', 'pub');
+INSERT INTO articles (user_id, title, content, status) VALUES (3, 'First Article by Harry', 'This is the content of the first article by Harry.', 'pub');
+INSERT INTO articles (user_id, title, content, status) VALUES (1, 'Second Article by Simon', 'This is the content of the second article by Simon.', 'draft');
+INSERT INTO articles (user_id, title, content, status) VALUES (2, 'Second Article by Dianne', 'This is the content of the second article by Dianne.', 'draft');
 
+INSERT INTO comments (user_id, article_id, comment) VALUES (2, 1, 'This is a comment by Dianne on Simon''s article.');
+INSERT INTO comments (user_id, article_id, comment) VALUES (3, 1, 'This is a comment by Harry on Simon''s article.');
+INSERT INTO comments (user_id, article_id, comment) VALUES (1, 2, 'This is a comment by Simon on Dianne''s article.');
+INSERT INTO comments (user_id, article_id, comment) VALUES (3, 2, 'This is a comment by Harry on Dianne''s article.');
+INSERT INTO comments (user_id, article_id, comment) VALUES (1, 3, 'This is a comment by Simon on Harry''s article.');
+INSERT INTO comments (user_id, article_id, comment) VALUES (2, 3, 'This is a comment by Dianne on Harry''s article.');
 
 
 COMMIT;

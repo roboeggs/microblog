@@ -44,8 +44,14 @@ app.use('/author', authorRoutes);
 const readerRoutes = require('./routes/articles');
 app.use('/reader', readerRoutes)
 
-// Add all the route handlers in articlesRoutes to the app under the path /
-app.use('/', authorRoutes);
+
+app.get('/', (req, res) => {
+    res.render(res.locals.layout, {
+        title: 'Main Home Page',
+        content: 'main-page',
+    });
+});
+
 
 // Make the web application listen for HTTP requests
 app.listen(port, () => {
